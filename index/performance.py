@@ -1,40 +1,85 @@
 import datetime
 import numpy as np
+import json
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.cbook as cbook
 
-row = 2
-col = 2
-n = 1
 def drawPlot(title,dates,price):
-	global n,row,col
 	years = mdates.YearLocator()   # every year
 	months = mdates.MonthLocator()  # every month
 	yearsFmt = mdates.DateFormatter('%Y')
-	fig = plt.subplot(row,col,n)
-	n = n+1
+	fig, ax = plt.subplots()
 	plt.title(title)
-	fig.plot(dates, prices)
-	fig.xaxis.set_major_locator(years)
-	fig.xaxis.set_major_formatter(yearsFmt)
-	fig.xaxis.set_minor_locator(months)
+	ax.plot(dates, price)
+	ax.xaxis.set_major_locator(years)
+	ax.xaxis.set_major_formatter(yearsFmt)
+	ax.xaxis.set_minor_locator(months)
 	datemin = np.datetime64(dates[0], 'Y')
 	datemax = np.datetime64(dates[-1], 'Y')+ np.timedelta64(1, 'Y')
-	fig.set_xlim(datemin, datemax)
-	fig.format_xdata = mdates.DateFormatter('%Y-%m-%d')
-	fig.grid(True)
-	
-plt.figure(figsize=(10,8))
+	ax.set_xlim(datemin, datemax)
+	ax.format_xdata = mdates.DateFormatter('%Y-%m-%d')
+	ax.grid(True)
+	fig.autofmt_xdate()
+	plt.show()
 
-dates = np.array([
-	np.datetime64(datetime.datetime(2004, 5, 1),'D'),
-	np.datetime64(datetime.datetime(2004, 12, 1),'D'),
-	np.datetime64(datetime.datetime(2005, 6, 1),'D'),
-	np.datetime64(datetime.datetime(2006, 7, 1),'D')])
-print(dates,type(dates),dates.dtype)
-prices = np.array([1,5,3,4])
-drawPlot("demo",dates,prices)
-drawPlot("demo2",dates,prices)
+def readData(fileAddress):
+	f = open(fileAddress,'r')
+	text = f.read()
+	f.close()
+	data = json.loads(text)
+	label = data['chart_data'][0][0]['long_label']
+	rawData = data['chart_data'][0][0]['raw_data']
+	dates = [];
+	prices = [];
+	beginTime = datetime.datetime(1970,1,1,0,0,0)
+	#过滤月份数据？
+	for single in rawData:
+		dates.append(beginTime+datetime.timedelta(milliseconds=single[0]))
+		prices.append(single[1])
+	return (label,dates,prices)
 
-plt.show()
+def statistic(title,prices):
+	allEarning = prices[-1]/prices[0]
+	monthCount = prices.shape[0]
+	priceInc = prices[0:-1]/prices[1:]
+	monthAvg = np.mean(priceInc,axis=0)
+	yearAvg = monthAvg*12
+	variance = np.std(priceInc,axis=0)
+	monthCompound = pow(allEarning,1.0/(monthCount-1))-1
+	yearCompound = pow(monthCompound+1,12)
+	print("指数：%s\n统计月份：%d\n总收益：%f\n月平均收益率：%f\n年平均收益率：%f\n月波动率：%f\n月复合收益率：%f\n年复合收益率：%f\n"%(title,monthCount,allEarning,monthAvg,yearAvg,variance,monthCompound,yearCompound))
+
+def handleSingle(fileAddress):
+	title,dates,prices = readData(fileAddress)
+	newDates = [];
+	for single in dates:
+		newDates.append(np.datetime64(single))
+	newPrices = np.array(prices)
+	statistic(title,newPrices)
+	drawPlot(title,newDates,newPrices)
+
+files = [
+	'../data/index/s&p/^SPX',
+	'../data/index/s&p/^SPXTR',
+	'../data/index/s&p/^MID',
+	'../data/index/s&p/^SML',
+	'../data/index/nasdaq/^NDX',
+	'../data/index/nasdaq/^NA100TR',
+	'../data/index/russell/^RUI',
+	'../data/index/russell/^RUITR',
+	'../data/index/russell/^RUT',
+	'../data/index/russell/^RUTTR',
+	'../data/index/msci/^MSEAFEACAP',
+	'../data/index/msci/^MSEFACTR',
+	'../data/index/msci/^MSEAFELCAP',
+	'../data/index/msci/^MSEFLCTR',
+	'../data/index/msci/^MSEAFEMCAP',
+	'../data/index/msci/^MSEFMCTR',
+	'../data/index/msci/^MSEAFEUCAP',
+	'../data/index/msci/^MSEFUCTR',
+]
+
+for singleFile in files:
+	handleSingle(singleFile)
+
