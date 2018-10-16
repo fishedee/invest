@@ -1,9 +1,7 @@
-import datetime
 import numpy as np
-import json
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import matplotlib.cbook as cbook
+import data
 
 def drawPlot(title,dates,price):
 	years = mdates.YearLocator()   # every year
@@ -23,22 +21,6 @@ def drawPlot(title,dates,price):
 	fig.autofmt_xdate()
 	plt.show()
 
-def readData(fileAddress):
-	f = open(fileAddress,'r')
-	text = f.read()
-	f.close()
-	data = json.loads(text)
-	label = data['chart_data'][0][0]['long_label']
-	rawData = data['chart_data'][0][0]['raw_data']
-	dates = [];
-	prices = [];
-	beginTime = datetime.datetime(1970,1,1,0,0,0)
-	#过滤月份数据？
-	for single in rawData:
-		dates.append(beginTime+datetime.timedelta(milliseconds=single[0]))
-		prices.append(single[1])
-	return (label,dates,prices)
-
 def statistic(title,prices):
 	allEarning = prices[-1]/prices[0]
 	monthCount = prices.shape[0]
@@ -51,7 +33,7 @@ def statistic(title,prices):
 	print("指数：%s\n统计月份：%d\n总收益：%f\n月平均收益率：%f\n年平均收益率：%f\n月波动率：%f\n月复合收益率：%f\n年复合收益率：%f\n"%(title,monthCount,allEarning,monthAvg,yearAvg,variance,monthCompound,yearCompound))
 
 def handleSingle(fileAddress):
-	title,dates,prices = readData(fileAddress)
+	title,dates,prices = data.readAndFilterData(fileAddress)
 	newDates = [];
 	for single in dates:
 		newDates.append(np.datetime64(single))
@@ -64,8 +46,12 @@ files = [
 	'../data/index/s&p/^SPXTR',
 	'../data/index/s&p/^MID',
 	'../data/index/s&p/^SML',
+	'../data/index/nasdaq/^IXIC',
+	'../data/index/nasdaq/^NACTR',
 	'../data/index/nasdaq/^NDX',
 	'../data/index/nasdaq/^NA100TR',
+	'../data/index/russell/^RUT200',
+	'../data/index/russell/^RUT200TR',
 	'../data/index/russell/^RUI',
 	'../data/index/russell/^RUITR',
 	'../data/index/russell/^RUT',

@@ -22,16 +22,8 @@ def drawPlot(title,title2,dates,price,price2):
 	fig.autofmt_xdate()
 	plt.show()
 
-def statistic(title,prices):
-	allEarning = prices[-1]/prices[0]
-	monthCount = prices.shape[0]
-	priceInc = prices[0:-1]/prices[1:]
-	monthAvg = np.mean(priceInc,axis=0)
-	yearAvg = monthAvg*12
-	variance = np.std(priceInc,axis=0)
-	monthCompound = pow(allEarning,1.0/(monthCount-1))-1
-	yearCompound = pow(monthCompound+1,12)
-	print("指数：%s\n统计月份：%d\n总收益：%f\n月平均收益率：%f\n年平均收益率：%f\n月波动率：%f\n月复合收益率：%f\n年复合收益率：%f\n"%(title,monthCount,allEarning,monthAvg,yearAvg,variance,monthCompound,yearCompound))
+def statistic(title,title2,prices,prices2):
+	print("指数：%s<->%s\n相关性：%f\n"%(title,title2,np.corrcoef(prices,prices2)[0,1]))
 
 def filterCompareData(leftDates,leftPrices,rightDates,rightPrices):
 	newDates = [];
@@ -62,26 +54,21 @@ def handleSingle(fileAddress,fileAddress2):
 	newPrices1 = np.array(prices1)
 	newPrices2 = np.array(prices2)
 	print("指数对比：")
-	statistic(title1,newPrices1)
-	statistic(title2,newPrices2)
-	newPrices1 = newPrices1/newPrices1[0]
-	newPrices2 = newPrices2/newPrices2[0]
-	drawPlot(title1,title2,dates,newPrices1,newPrices2)
+	statistic(title1,title2,newPrices1,newPrices2)
+	newPrices1 = newPrices1[0:-1]/newPrices1[1:]
+	newPrices2 = newPrices2[0:-1]/newPrices2[1:]
+	drawPlot(title1,title2,dates[1:],newPrices1,newPrices2)
 	print("\n")
 
 files = [
-	['../data/index/s&p/^SPX','../data/index/msci/^MSEFLCTR'],
 	['../data/index/s&p/^SPX','../data/index/s&p/^MID'],
 	['../data/index/s&p/^SPX','../data/index/s&p/^SML'],
 	['../data/index/s&p/^MID','../data/index/s&p/^SML'],
 	['../data/index/s&p/^SPX','../data/index/nasdaq/^IXIC'],
-	['../data/index/s&p/^SPXTR','../data/index/nasdaq/^NACTR'],
 	['../data/index/s&p/^SPXTR','../data/index/nasdaq/^NA100TR'],
-	['../data/index/russell/^RUI','../data/index/russell/^RUITR'],
-	['../data/index/russell/^RUT','../data/index/russell/^RUTTR'],
-	['../data/index/russell/^RUITR','../data/index/russell/^RUTTR'],
-	['../data/index/russell/^RUT200TR','../data/index/russell/^RUTTR'],
 	['../data/index/russell/^RUT200TR','../data/index/russell/^RUITR'],
+	['../data/index/russell/^RUT200TR','../data/index/russell/^RUTTR'],
+	['../data/index/russell/^RUITR','../data/index/russell/^RUTTR'],
 	['../data/index/msci/^MSEFACTR','../data/index/msci/^MSEFLCTR'],
 	['../data/index/msci/^MSEFLCTR','../data/index/msci/^MSEFMCTR'],
 	['../data/index/msci/^MSEFLCTR','../data/index/msci/^MSEFUCTR'],
