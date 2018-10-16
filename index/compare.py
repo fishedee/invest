@@ -71,6 +71,8 @@ def handleSingle(fileAddress,fileAddress2):
 
 files = [
 	['../data/index/s&p/^SPX','../data/index/msci/^MSEFLCTR'],
+	['../data/index/s&p/^SPXTR','../data/index/russell/^RUT200TR'],
+	['../data/index/s&p/^SPXTR','../data/index/russell/^RUITR'],
 	['../data/index/s&p/^SPX','../data/index/s&p/^MID'],
 	['../data/index/s&p/^SPX','../data/index/s&p/^SML'],
 	['../data/index/s&p/^MID','../data/index/s&p/^SML'],
@@ -79,6 +81,7 @@ files = [
 	['../data/index/s&p/^SPXTR','../data/index/nasdaq/^NA100TR'],
 	['../data/index/russell/^RUI','../data/index/russell/^RUITR'],
 	['../data/index/russell/^RUT','../data/index/russell/^RUTTR'],
+	['../data/index/russell/^RUI','../data/index/russell/^RUT'],
 	['../data/index/russell/^RUITR','../data/index/russell/^RUTTR'],
 	['../data/index/russell/^RUT200TR','../data/index/russell/^RUTTR'],
 	['../data/index/russell/^RUT200TR','../data/index/russell/^RUITR'],
