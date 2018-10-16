@@ -24,14 +24,14 @@ def getMonthLastDay(year,month):
 		month = 1
 	return datetime.datetime(year,month,1)-datetime.timedelta(1)
 
-def isCloseMonth(prevDate,date):
+def nextMonth(prevDate):
 	year = prevDate.year
 	month = prevDate.month
 	month = month +1
 	if month == 13:
 		year = year + 1
 		month = 1
-	return date.year == year and date.month == month
+	return getMonthLastDay(year,month)
 
 def filterData(dates,prices):
 	newDates = [];
@@ -45,8 +45,12 @@ def filterData(dates,prices):
 			#重复的月份数据
 			newPrices[-1] = prices[i]
 		else:
-			if prevDate != None and isCloseMonth(prevDate,date) == False:
-				raise Error("my god!")
+			if prevDate != None:
+				nextDate = nextMonth(prevDate)
+				while nextDate.year != date.year or nextDate.month != date.month:
+					newDates.append(getMonthLastDay(nextDate.year,nextDate.month))
+					newPrices.append(prices[-1])
+					nextDate = nextMonth(nextDate)
 			#非重复的月份数据
 			newDates.append(getMonthLastDay(date.year,date.month))
 			newPrices.append(prices[i])

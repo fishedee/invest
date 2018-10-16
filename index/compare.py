@@ -70,6 +70,11 @@ def handleSingle(fileAddress,fileAddress2):
 	print("\n")
 
 files = [
+	['../data/index/msci/^MSEAFEGTR','../data/index/msci/^MSEAFEVTR'],
+	['../data/index/msci/^MSEAFEVTR','../data/index/msci/^MSEAFEHDYTR'],
+	['../data/index/msci/^MSEFLCTR','../data/index/msci/^MSEAFEGTR'],
+	['../data/index/msci/^MSEFLCTR','../data/index/msci/^MSEAFEVTR'],
+	['../data/index/msci/^MSEFLCTR','../data/index/msci/^MSEAFEHDYTR'],
 	['../data/index/s&p/^SPX','../data/index/msci/^MSEFLCTR'],
 	['../data/index/s&p/^SPXTR','../data/index/russell/^RUT200TR'],
 	['../data/index/s&p/^SPXTR','../data/index/russell/^RUITR'],
