@@ -42,21 +42,15 @@ def handleSingle(fileAddress):
 	drawPlot(title,newDates,newPrices)
 
 files = [
-	'../data/china_index/上证50_交易特征_时间序列分析.xls',
-	'../data/china_index/上证50全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/基本面50全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/沪深300全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/沪深300低波全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/沪深300价值全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/沪深300成长全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证500全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证500低波全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证500价值全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证500成长全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/上证红利全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证红利全收益_交易特征_时间序列分析.xls',
-	
-
+	'../data/china_fund/每日基金净值与行情_510050_上证50etf.xls',
+	'../data/china_fund/每日基金净值与行情_160716_基本面50.xls',
+	'../data/china_fund/每日基金净值与行情_510300_沪深300etf.xls',
+	'../data/china_fund/每日基金净值与行情_510500_中证500etf.xls',
+	'../data/china_fund/每日基金净值与行情_510880_上证红利etf.xls',
+	'../data/china_fund/每日基金净值与行情_501029_标普红利.xls',
+	'../data/china_fund/每日基金净值与行情_161907_万家中证红利.xls',
+	'../data/china_fund/每日基金净值与行情_100032_富国红利增强.xls',
+	'../data/china_fund/每日基金净值与行情_090010_大成中证红利.xls',
 ]
 
 for singleFile in files:
