@@ -1,18 +1,54 @@
+import json
 import datetime
 import xlrd
 import os
 
-def readData(fileAddress):
+def readDataChinaIndex(fileAddress):
 	source = xlrd.open_workbook(fileAddress)
 	sheet = source.sheet_by_index(0)
 	dates = sheet.col_values(0)[1:];
-	prices = sheet.col_values(4)[1:];
-	#FIXME '复权单位净值(元)'
+	prices = sheet.col_values(3)[1:];
+	newDates = [];
+	(fileDirectory,fileName) = os.path.split(fileAddress);
+	(baseName,extName) = os.path.splitext(fileName);
+	name = baseName.split("_")[0]
+	#数据
+	for single in dates:
+		if single == "":
+			break
+		newSingle = datetime.datetime(1899,12,30,1,0,0)+datetime.timedelta(days=single)
+		newDates.append(newSingle)
+	newPrices = [];
+	for single in prices:
+		if single == "":
+			break
+		newPrices.append(single)
+	if len(newDates) != len(newPrices):
+		raise Exception("my god")
+	newDates.reverse()
+	newPrices.reverse()
+	return (name,newDates,newPrices)
+
+
+def readDataChinaFund(fileAddress):
+	source = xlrd.open_workbook(fileAddress)
+	sheet = source.sheet_by_index(0)
+	dates = sheet.col_values(0)[1:];
+	pricesCol = -1
+	iCol = 1
+	while iCol < sheet.ncols:
+		col = sheet.col_values(iCol)
+		if col[0] == '复权单位净值(元)':
+			pricesCol = iCol
+			break
+		iCol = iCol + 1
+	if pricesCol == -1:
+		raise Exception("do not find priceCol")
+	prices = sheet.col_values(pricesCol)[1:];
 	newDates = [];
 	(fileDirectory,fileName) = os.path.split(fileAddress);
 	(baseName,extName) = os.path.splitext(fileName);
 	name = baseName.split("_")[-1]
-	print(dates[0],prices[0])
 	#数据
 	for single in dates:
 		if single == "":
@@ -29,6 +65,34 @@ def readData(fileAddress):
 	newDates.reverse()
 	newPrices.reverse()
 	return (name,newDates,newPrices)
+
+def readDataIndex(fileAddress):
+	f = open(fileAddress,'r')
+	text = f.read()
+	f.close()
+	data = json.loads(text)
+	label = data['chart_data'][0][0]['long_label']
+	rawData = data['chart_data'][0][0]['raw_data']
+	dates = [];
+	prices = [];
+	beginTime = datetime.datetime(1970,1,1,0,0,0)
+	#过滤月份数据？
+	for single in rawData:
+		dates.append(beginTime+datetime.timedelta(milliseconds=single[0]))
+		prices.append(single[1])
+	return (label,dates,prices)
+
+def readData(fileAddress):
+	fileAddressSeg = fileAddress.split("/",-1)
+	folder = fileAddressSeg[2]
+	if folder == "index":
+		return readDataIndex(fileAddress)
+	elif folder == "china_fund":
+		return readDataChinaFund(fileAddress)
+	elif folder == "china_index":
+		return readDataChinaIndex(fileAddress)
+	else:
+		raise Exception("unknown address")
 
 def getMonthLastDay(year,month):
 	month = month + 1

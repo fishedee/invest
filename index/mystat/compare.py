@@ -1,15 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import data
 
-def drawPlot(title,dates,price):
+def drawPlot(title,title2,dates,price,price2):
 	years = mdates.YearLocator()   # every year
 	months = mdates.MonthLocator()  # every month
 	yearsFmt = mdates.DateFormatter('%Y')
 	fig, ax = plt.subplots()
-	plt.title(title)
+	plt.title(title+"<->"+title2)
 	ax.plot(dates, price)
+	ax.plot(dates,price2)
 	ax.xaxis.set_major_locator(years)
 	ax.xaxis.set_major_formatter(yearsFmt)
 	ax.xaxis.set_minor_locator(months)
@@ -32,27 +32,40 @@ def statistic(title,prices):
 	yearCompound = pow(monthCompound+1,12)
 	print("指数：%s\n统计月份：%d\n总收益：%f\n月平均收益率：%f\n年平均收益率：%f\n月波动率：%f\n月复合收益率：%f\n年复合收益率：%f\n"%(title,monthCount,allEarning,monthAvg,yearAvg,variance,monthCompound,yearCompound))
 
-def handleSingle(fileAddress):
-	title,dates,prices = data.readAndFilterData(fileAddress)
+def filterCompareData(leftDates,leftPrices,rightDates,rightPrices):
+	newDates = [];
+	newLeftPrices = [];
+	newRightPrices = [];
+	i = 0
+	j = 0
+	while i < len(leftDates) and j < len(rightDates):
+		if leftDates[i] < rightDates[j]:
+			i = i +1 
+		elif leftDates[i] > rightDates[j]:
+			j = j + 1
+		else:
+			newDates.append(leftDates[i])
+			newLeftPrices.append(leftPrices[i])
+			newRightPrices.append(rightPrices[j])
+			i = i + 1
+			j = j + 1
+	return (newDates,newLeftPrices,newRightPrices)
+
+def run(data1,data2):
+	(title1,dates1,prices1) = data1
+	(title2,dates2,prices2) = data2
+	dates,prices1,prices2 = filterCompareData(dates1,prices1,dates2,prices2)
 	newDates = [];
 	for single in dates:
 		newDates.append(np.datetime64(single))
-	newPrices = np.array(prices)
-	statistic(title,newPrices)
-	drawPlot(title,newDates,newPrices)
+	newPrices1 = np.array(prices1)
+	newPrices2 = np.array(prices2)
+	print("指数对比：")
+	statistic(title1,newPrices1)
+	statistic(title2,newPrices2)
+	newPrices1 = newPrices1/newPrices1[0]
+	newPrices2 = newPrices2/newPrices2[0]
+	drawPlot(title1,title2,dates,newPrices1,newPrices2)
+	print("\n")
 
-files = [
-	'../data/china_fund/每日基金净值与行情_510050_上证50etf.xls',
-	'../data/china_fund/每日基金净值与行情_160716_基本面50.xls',
-	'../data/china_fund/每日基金净值与行情_510300_沪深300etf.xls',
-	'../data/china_fund/每日基金净值与行情_510500_中证500etf.xls',
-	'../data/china_fund/每日基金净值与行情_510880_上证红利etf.xls',
-	'../data/china_fund/每日基金净值与行情_501029_标普红利.xls',
-	'../data/china_fund/每日基金净值与行情_161907_万家中证红利.xls',
-	'../data/china_fund/每日基金净值与行情_100032_富国红利增强.xls',
-	'../data/china_fund/每日基金净值与行情_090010_大成中证红利.xls',
-]
-
-for singleFile in files:
-	handleSingle(singleFile)
 

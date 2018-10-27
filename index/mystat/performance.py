@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import data
 
 def drawPlot(title,dates,price):
 	years = mdates.YearLocator()   # every year
@@ -32,33 +31,12 @@ def statistic(title,prices):
 	yearCompound = pow(monthCompound+1,12)
 	print("指数：%s\n统计月份：%d\n总收益：%f\n月平均收益率：%f\n年平均收益率：%f\n月波动率：%f\n月复合收益率：%f\n年复合收益率：%f\n"%(title,monthCount,allEarning,monthAvg,yearAvg,variance,monthCompound,yearCompound))
 
-def handleSingle(fileAddress):
-	title,dates,prices = data.readAndFilterData(fileAddress)
+def run(data):
+	(title,dates,prices) = data;
 	newDates = [];
 	for single in dates:
 		newDates.append(np.datetime64(single))
 	newPrices = np.array(prices)
 	statistic(title,newPrices)
 	drawPlot(title,newDates,newPrices)
-
-files = [
-	'../data/china_index/上证50_交易特征_时间序列分析.xls',
-	'../data/china_index/上证50全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/基本面50全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/沪深300全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/沪深300低波全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/沪深300价值全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/沪深300成长全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证500全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证500低波全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证500价值全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证500成长全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/上证红利全收益_交易特征_时间序列分析.xls',
-	'../data/china_index/中证红利全收益_交易特征_时间序列分析.xls',
-	
-
-]
-
-for singleFile in files:
-	handleSingle(singleFile)
 
