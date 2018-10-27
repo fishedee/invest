@@ -1,3 +1,5 @@
+import sys;
+sys.path.append("..")
 import source.data as data
 import mystat.performance as performance
 
@@ -14,5 +16,5 @@ files = [
 ]
 
 for singleFile in files:
-	data1 = data.readAndFilterData(singleFile)
+	data1 = data.readAndFilterData('../'+singleFile)
 	performance.run(data1)

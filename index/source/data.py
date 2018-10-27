@@ -84,7 +84,7 @@ def readDataIndex(fileAddress):
 
 def readData(fileAddress):
 	fileAddressSeg = fileAddress.split("/",-1)
-	folder = fileAddressSeg[2]
+	folder = fileAddressSeg[3]
 	if folder == "index":
 		return readDataIndex(fileAddress)
 	elif folder == "china_fund":

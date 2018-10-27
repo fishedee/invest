@@ -1,3 +1,5 @@
+import sys;
+sys.path.append("..")
 import source.data as data
 import mystat.corrcoef as corrcoef
 
@@ -17,6 +19,6 @@ files = [
 ]
 
 for singleFile in files:
-	data1 = data.readAndFilterData(singleFile[0])
-	data2 = data.readAndFilterData(singleFile[1])
+	data1 = data.readAndFilterData('../'+singleFile[0])
+	data2 = data.readAndFilterData('../'+singleFile[1])
 	corrcoef.run(data1,data2)
