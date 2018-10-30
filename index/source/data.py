@@ -29,6 +29,41 @@ def readDataChinaIndex(fileAddress):
 	newPrices.reverse()
 	return (name,newDates,newPrices)
 
+def readDataChinaValue(fileAddress,colName):
+	source = xlrd.open_workbook(fileAddress)
+	sheet = source.sheet_by_index(0)
+	dates = sheet.col_values(0)[1:];
+	pricesCol = -1
+	iCol = 1
+	while iCol < sheet.ncols:
+		col = sheet.col_values(iCol)
+		if col[0] == colName:
+			pricesCol = iCol
+			break
+		iCol = iCol + 1
+	if pricesCol == -1:
+		raise Exception("do not find colName:["+colName+"]")
+	prices = sheet.col_values(pricesCol)[1:];
+	newDates = [];
+	(fileDirectory,fileName) = os.path.split(fileAddress);
+	(baseName,extName) = os.path.splitext(fileName);
+	name = baseName.split("_")[0]
+	#数据
+	for single in dates:
+		if single == "":
+			break
+		newSingle = datetime.datetime.strptime(single,'%Y-%m-%d')
+		newDates.append(newSingle)
+	newPrices = [];
+	for single in prices:
+		if single == "":
+			break
+		newPrices.append(single)
+	if len(newDates) != len(newPrices):
+		raise Exception("my god")
+	newDates.reverse()
+	newPrices.reverse()
+	return (name+"_"+colName,newDates,newPrices)
 
 def readDataChinaFund(fileAddress):
 	source = xlrd.open_workbook(fileAddress)
@@ -91,6 +126,8 @@ def readData(fileAddress):
 		return readDataChinaFund(fileAddress)
 	elif folder == "china_index":
 		return readDataChinaIndex(fileAddress)
+	elif folder == "china_value":
+		return readDataChinaValue("/".join(fileAddressSeg[0:-1]),fileAddressSeg[-1])
 	else:
 		raise Exception("unknown address")
 

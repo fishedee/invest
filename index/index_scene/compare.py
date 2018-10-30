@@ -4,6 +4,7 @@ import source.data as data
 import mystat.compare as compare
 
 files = [
+	['../data/index/s&p/^SPX','../data/index/s&p/^SPXTR'],
 	['../data/index/msci/^MSEAFEGTR','../data/index/msci/^MSEAFEVTR'],
 	['../data/index/msci/^MSEAFEVTR','../data/index/msci/^MSEAFEHDYTR'],
 	['../data/index/msci/^MSEFLCTR','../data/index/msci/^MSEAFEGTR'],
