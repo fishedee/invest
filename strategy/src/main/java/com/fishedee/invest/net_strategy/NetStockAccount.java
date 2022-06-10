@@ -15,19 +15,33 @@ public class NetStockAccount {
 
     private State state;
 
+    private boolean isDebug;
+
     public NetStockAccount(StockAccount stockAccount){
         this.account = stockAccount;
         this.state = State.MONEY_AND_STOCK;
+        this.isDebug = false;
+    }
+
+    public void setIsDebug(boolean isDebug){
+        this.isDebug = isDebug;
     }
 
     public void buy(BigDecimal price){
         //价格下跌到sigma%以下
         if( state == State.MONEY_AND_STOCK ){
             //余额全部买了
+            if( this.isDebug){
+                System.out.printf("buy %f\n",price);
+            }
             this.account.buy(this.account.getBalance(),price);
             state = State.TWO_STOCK;
         }else if( state == State.TWO_MONEY ){
             //买一半
+
+            if( this.isDebug){
+                System.out.printf("buy %f\n",price);
+            }
             account.buy(this.account.getBalance().divide(new BigDecimal("2"),8,BigDecimal.ROUND_HALF_UP),price);
             state = State.MONEY_AND_STOCK;
         }else{
@@ -38,10 +52,16 @@ public class NetStockAccount {
     public void sell(BigDecimal price){
         if( state == State.MONEY_AND_STOCK ){
             //股票全卖了
+            if( this.isDebug){
+                System.out.printf("sell %f\n",price);
+            }
             account.sell(price,this.account.getAmount());
             state = State.TWO_MONEY;
         }else if( state == State.TWO_STOCK){
             //卖一半
+            if( this.isDebug){
+                System.out.printf("sell %f\n",price);
+            }
             account.sell(price,this.account.getAmount().divide(new BigDecimal("2"),8,BigDecimal.ROUND_HALF_UP));
             state = State.MONEY_AND_STOCK;
         }else{

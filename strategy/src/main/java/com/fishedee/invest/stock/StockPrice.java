@@ -10,6 +10,8 @@ public class StockPrice {
 
     private double mean;
 
+    private double originPrice;
+
     private double sigma;
 
     private int step;
@@ -22,6 +24,7 @@ public class StockPrice {
 
     public StockPrice(double price,double mean,double sigma,int n){
         this.price = price;
+        this.originPrice = price;
         this.mean = mean;
         this.sigma = sigma;
         this.n = n;
@@ -32,8 +35,30 @@ public class StockPrice {
 
     private double nextGaussian(){
         double gaussian = this.random.nextGaussian();
-        double result = this.sigmaSqrt * gaussian+ this.mean;
-        return result;
+        double gaussian2 = this.sigmaSqrt * gaussian+ this.mean;
+        return this.price + gaussian2;
+    }
+
+    private double nextRandom(){
+        double rand = this.random.nextDouble()-0.5;
+        double rand2 =  this.sigmaSqrt* rand + this.mean;
+        return this.price + rand2;
+    }
+
+
+    private double nextRandom2(){
+        double rand = this.random.nextDouble()-0.5;
+        double rand2 = this.sigma*this.sigma;
+        if( rand <= 0 ){
+            rand2 = rand2 * -1;
+        }
+        return this.price + rand2;
+    }
+
+    private double nextOriginGaussian(){
+        double gaussian = this.random.nextGaussian();
+        double gaussian2 = this.sigmaSqrt * gaussian+ this.mean;
+        return this.originPrice + gaussian2;
     }
 
     public boolean hasNext(){
@@ -44,8 +69,10 @@ public class StockPrice {
         if( this.hasNext() == false ){
             throw new RuntimeException("Nothing generate");
         }
-        double gaussian =  this.nextGaussian();
-        this.price = this.price +gaussian;
+        this.price = this.nextRandom();
+        if( this.price < 0 ){
+            this.price = 0;
+        }
         this.step ++;
         return this.price;
     }
